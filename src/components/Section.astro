@@ -1,0 +1,85 @@
+---
+// Generic section wrapper — compact numbered header
+export interface Props {
+  id?: string;
+  num?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  variant?: 'default' | 'bone' | 'cream' | 'dark';
+  align?: 'left' | 'center';
+  tight?: boolean;
+  width?: 'default' | 'wide' | 'narrow';
+}
+const {
+  id,
+  num,
+  eyebrow,
+  title,
+  intro,
+  variant = 'default',
+  align = 'left',
+  tight = false,
+  width = 'default',
+} = Astro.props;
+
+const sectionClass = [
+  'section',
+  variant === 'bone'  && 'section--bone',
+  variant === 'cream' && 'section--cream',
+  variant === 'dark'  && 'section--dark',
+  tight && 'section--tight',
+].filter(Boolean).join(' ');
+
+const containerClass = [
+  'container',
+  width === 'wide'   && 'container--wide',
+  width === 'narrow' && 'container--narrow',
+].filter(Boolean).join(' ');
+---
+
+<section id={id} class={sectionClass} data-section-target>
+  <div class={containerClass}>
+    {(eyebrow || title || intro) && (
+      <header class:list={['s-head', align === 'center' && 's-head--center']} data-reveal>
+        {(num || eyebrow) && (
+          <span class="eyebrow">
+            {num && <span class="eyebrow__num">{num}</span>}
+            {eyebrow && <span>{eyebrow}</span>}
+          </span>
+        )}
+        {title && <h2 class="s-head__title">{title}</h2>}
+        {intro && <p class="s-head__intro">{intro}</p>}
+      </header>
+    )}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .s-head {
+    max-width: 44ch;
+    margin-bottom: clamp(1.5rem, 3vw, 2.75rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  @media (max-width: 600px) {
+    .s-head { gap: 0.65rem; margin-bottom: 1.5rem; }
+  }
+  .s-head--center {
+    margin-inline: auto;
+    text-align: center;
+    align-items: center;
+    max-width: 56ch;
+  }
+  .s-head__title { margin: 0; }
+  .s-head__intro {
+    font-size: var(--fs-base);
+    line-height: var(--lh-snug);
+    color: var(--muted);
+    max-width: 50ch;
+    font-weight: 400;
+  }
+  .section--dark .s-head__intro { color: rgba(255,255,255,0.72); }
+</style>

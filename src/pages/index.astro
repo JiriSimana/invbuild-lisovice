@@ -1,0 +1,320 @@
+---
+import Layout      from '../layouts/Layout.astro';
+import Header      from '../components/Header.astro';
+import Hero        from '../components/Hero.astro';
+import Section     from '../components/Section.astro';
+import SectionNav  from '../components/SectionNav.astro';
+import Gallery     from '../components/Gallery.astro';
+import StorySplit  from '../components/StorySplit.astro';
+import Lokalita    from '../components/Lokalita.astro';
+import Services    from '../components/Services.astro';
+import Kontakt     from '../components/Kontakt.astro';
+import Footer      from '../components/Footer.astro';
+import Reveal      from '../components/Reveal.astro';
+
+// ----- HERO -----
+const stats = [
+  { label: 'Plocha pozemku',    value: '683 m²'      },
+  { label: 'Užitná plocha',     value: '153 m²'      },
+  { label: 'Zastavěná plocha',  value: '200 m²'      },
+  { label: 'Dispozice',          value: '5+kk'        },
+  { label: 'Cena',               value: 'Na vyžádání' },
+];
+
+const heroImages = [
+  { src: '/img/lisovice-05.webp', alt: 'Rodinný dům Lisovice — jídelna s kuchyní' },
+  { src: '/img/lisovice-01.webp', alt: 'Rodinný dům Lisovice — pohled ze zahrady' },
+  { src: '/img/lisovice-02.webp', alt: 'Rodinný dům Lisovice — boční pohled' },
+];
+
+const galleryImages = Array.from({ length: 9 }, (_, i) => {
+  const n = String(i + 1).padStart(2, '0');
+  const alts: Record<string, string> = {
+    '01': 'Pohled ze zahrady s velkým stromem',
+    '02': 'Boční pohled s kamennou fasádou',
+    '03': 'Pohled s garáží',
+    '04': 'Detail vstupu',
+    '05': 'Jídelna s kuchyní a obrazem',
+    '06': 'Kuchyň s mramorovým ostrůvkem',
+    '07': 'Jídelní kout s knihovnou',
+    '08': 'Hlavní ložnice',
+    '09': 'Hlavní ložnice — detail',
+  };
+  return {
+    src: `/img/lisovice-${n}.webp`,
+    alt: `Vizualizace ${i + 1} — ${alts[n]}`,
+  };
+});
+
+const locGroups = [
+  {
+    id: '1np',
+    title: '1. NP',
+    content: `<p><strong>Celková užitná plocha podlaží: 102,62 m²</strong></p>
+      <ul>
+        <li><strong>Obývací pokoj</strong> — 45,85 m². Ideální prostor pro rodinné chvíle a zábavu.</li>
+        <li><strong>Vstupní hala</strong> — 8,80 m². Elegantní vstup s keramickou dlažbou.</li>
+        <li><strong>Pracovna a ložnice</strong> — prostor pro klid a práci.</li>
+        <li><strong>Koupelna a technické zázemí</strong> — moderní a funkční design.</li>
+      </ul>`,
+  },
+  {
+    id: '2np',
+    title: '2. NP',
+    content: `<p><strong>Celková užitná plocha podlaží: 50,39 m²</strong></p>
+      <ul>
+        <li><strong>Dvě ložnice</strong> — relaxujte a odpočívejte v prostorných pokojích.</li>
+        <li><strong>Terasa</strong> — 8,20 m². Ideální místo pro ranní kávu s výhledem.</li>
+      </ul>`,
+  },
+  {
+    id: 'architektura',
+    title: 'Architektonické a funkční řešení',
+    content: `<ul>
+        <li><strong>Nové dělící příčky</strong> budou z SDK profilů 12,5 cm.</li>
+        <li><strong>Konstrukce krovu</strong> zůstává stávající — mezi a pod krovem bude tepelná izolace.</li>
+        <li><strong>Střešní krytina</strong> nahrazena falcovaným plechem pro dlouhou životnost.</li>
+        <li><strong>Fasáda</strong> — nová MVC omítka.</li>
+        <li><strong>Schodiště</strong> stávající (obložené SDK) do podkroví, výška zábradlí min. 1000 mm,
+          průchodná šířka 1000 mm. Prostor schodiště osvětlen uměle. Vstupní schodiště upravené
+          a rozšířené do zahrady.</li>
+        <li><strong>Pod krovem</strong> nově tepelná izolace, ze spodu SDK podhled. Stávající
+          konstrukce krovu opatřena ochranným nátěrem proti plísním a škůdcům. Dřevěné konstrukce
+          v exteriéru opatřeny ochranným nátěrem. Důležitým prvkem střechy je její odvětrání.</li>
+      </ul>`,
+  },
+  {
+    id: 'okna',
+    title: 'Okna a dveře',
+    content: `<ul>
+        <li><strong>Nová plastová okna a vstupní dveře</strong> — barva antracit, součinitel
+          prostupu tepla U 1,0 W/m²K.</li>
+        <li><strong>Venkovní parapet</strong> TiZn, vnitřní parapet plastový.</li>
+        <li><strong>Vstupní dveře</strong> nové plastové zateplené.</li>
+        <li><strong>Vnitřní dveře</strong> — hladké dýhované typové (plné nebo prosklené)
+          s obložkovou zárubní a prahem, kování kovové.</li>
+      </ul>`,
+  },
+  {
+    id: 'topeni',
+    title: 'Topení a voda',
+    content: `<ul>
+        <li><strong>Topení</strong> — lokální tuhá paliva, ústřední dálkové.</li>
+        <li><strong>Voda</strong> — připojení na obecní vodovod.</li>
+      </ul>`,
+  },
+  {
+    id: 'lokalita-obcanska',
+    title: 'Lokalita a občanská vybavenost',
+    content: `<p>Dům se nachází v obci <strong>Lisovice, v okrese Kladno</strong>. Lisovice se
+      nachází nedaleko od Prahy s velmi dobrou dostupností do hlavního města.</p>
+      <p>Tento rodinný dům kombinuje <strong>luxus, pohodlí a kontrast s přírodou</strong>.
+      Je skvělou investicí do budoucnosti vaší rodiny. Velké výhody přináší blízkost metropole —
+      pracovní příležitosti i možnost odpočinout od shonu velkoměsta.</p>
+      <p><strong>Občanská vybavenost</strong> v dostupnosti: bus, vlak, škola, školka, lékárna,
+      dětské hřiště, veterinář, pošta, sportoviště, restaurace. <strong>Cesta do Prahy</strong>
+      Vám zabere přibližně 40 minut.</p>`,
+  },
+];
+
+const gatewayCards = [
+  {
+    title: 'Naše projekty',
+    blurb: 'Další developerské projekty od INVBUILD — nízkoenergetické stavby i rekonstrukce.',
+    image: { src: '/img/lisovice-03.webp', alt: 'Developerské projekty INVBUILD' },
+    href: 'https://invbuild.cz/projekty',
+    external: true,
+  },
+  {
+    title: 'Reality v nabídce',
+    blurb: 'Prodej i pronájem nemovitostí s profesionálním a lidským přístupem.',
+    image: { src: '/img/lisovice-06.webp', alt: 'Reality INVBUILD' },
+    href: 'https://invbuild.cz/reality',
+    external: true,
+  },
+  {
+    title: 'Naše služby',
+    blurb: 'Hypotéka, odhad, pojištění, právní servis, foto/video, VR prohlídky.',
+    image: { src: '/img/lisovice-08.webp', alt: 'Služby INVBUILD' },
+    href: 'https://invbuild.cz',
+    external: true,
+  },
+];
+
+const navItems = [
+  { id: 'hero',         label: 'Úvod' },
+  { id: 'galerie',      label: 'Galerie' },
+  { id: 'lisovice',     label: 'O projektu' },
+  { id: 'rekonstrukce', label: 'Rekonstrukce' },
+  { id: 'dispozice',    label: 'Dispozice' },
+  { id: 'lokalita',     label: 'Lokalita' },
+  { id: 'invbuild',     label: 'INVBUILD' },
+  { id: 'kontakt',      label: 'Kontakt' },
+];
+---
+
+<Layout
+  title="Rodinný dům Lisovice — 5+kk · 153 m² · INVBUILD"
+  description="Elegantní rodinný dům 5+kk v Lisovicích u Prahy. 153 m² užitné plochy, pozemek 683 m². Kompletní rekonstrukce dokončena 2024/2025. Prodává INVBUILD."
+>
+  <Header />
+  <SectionNav items={navItems} />
+
+  <Hero
+    title="Rodinný dům Lisovice"
+    location="Lisovice · Kladno"
+    stats={stats}
+    images={heroImages}
+  />
+
+  <!-- 01 — GALERIE -->
+  <Section
+    id="galerie"
+    variant="dark"
+    num="01"
+    eyebrow="Galerie projektu"
+    title="Podívejte se dovnitř."
+    intro="Prohlédněte si galerii developerského projektu nemovitosti v Lisovicích — exteriér, kuchyň, jídelna, ložnice."
+  >
+    <Gallery images={galleryImages} />
+  </Section>
+
+  <!-- 02 — O PROJEKTU (LISOVICE) -->
+  <Section id="lisovice" variant="bone">
+    <StorySplit
+      num="02"
+      eyebrow="O projektu"
+      title="Lisovice"
+      caption="Vizualizace 05 — Jídelna s kuchyní"
+      image={{ src: '/img/lisovice-05.webp', alt: 'Jídelna s kuchyní v rodinném domě Lisovice' }}
+    >
+      <p>
+        Tento elegantní a prostorný dům <strong>5+kk</strong> je dokonalou volbou pro ty,
+        kteří hledají kombinaci moderního designu a maximálního komfortu.
+      </p>
+      <p>
+        Lisovice jsou malá vesnice, část městyse Zlonice v okrese <strong>Kladno</strong>.
+        Nachází se v údolí Zlonického potoka, zhruba 2 km západně od Zlonic a 6,5 km
+        od Slaného. Vedlejší vesnice je 5 minut jízdy autem, kde jsou potraviny a další
+        občanská vybavenost.
+      </p>
+      <p>
+        <strong>Zajímavost:</strong> v Lisovicích se nachází železniční muzeum
+        s výstavou lokomotiv a nákladních vozů ze sbírkového fondu muzea.
+      </p>
+      <p class="split__cta-wrap">
+        <a href="#galerie" class="btn btn--ink">Prohlédnout galerii</a>
+      </p>
+    </StorySplit>
+  </Section>
+
+  <!-- 03 — REKONSTRUKCE -->
+  <Section id="rekonstrukce" variant="dark">
+    <StorySplit
+      variant="dark"
+      reverse
+      num="03"
+      eyebrow="Stavba"
+      title="Rekonstrukce"
+      caption="Vizualizace 01 — Pohled ze zahrady"
+      image={{ src: '/img/lisovice-01.webp', alt: 'Rodinný dům Lisovice — pohled ze zahrady s velkým stromem' }}
+    >
+      <p>
+        Rodinný dům v Lisovicích prochází <strong>kompletní rekonstrukcí</strong>, která
+        mu vdechne moderní vzhled. <strong>Hotovo bude na přelomu let 2024/2025</strong>.
+        Vznikne komfortní bydlení 5+kk s užitnou plochou <strong>153 m²</strong>.
+      </p>
+      <p>
+        Dům nabízí obytné podkroví využitelné dle vašich představ a unikátní
+        <strong>letní / zimní zahradu</strong> pro chvíle s rodinou a přáteli.
+      </p>
+      <p>
+        Rozsáhlá zahrada za domem s výhledem na pole zajišťuje klid a nabízí dostatek
+        prostoru — například pro bazén s pergolou.
+      </p>
+      <p class="split__cta-wrap">
+        <a href="#kontakt" class="btn btn--accent">Domluvit prohlídku</a>
+      </p>
+    </StorySplit>
+  </Section>
+
+  <!-- 04 — DISPOZICE -->
+  <Section id="dispozice">
+    <StorySplit
+      num="04"
+      eyebrow="Dispozice"
+      title="5+kk s možností 6+kk."
+      caption="Vizualizace 02 — Boční pohled"
+      image={{ src: '/img/lisovice-02.webp', alt: 'Pohled na rodinný dům Lisovice — boční pohled s kamennou fasádou' }}
+    >
+      <p>
+        Tento dům v Lisovicích (5+kk, s možností rozšíření na <strong>6+kk</strong>)
+        nabízí moderní a luxusní bydlení ve venkovském stylu.
+      </p>
+      <p>
+        Prosklené prvky propojují interiér se zahradou a vnášejí do domu světlo.
+        Z obývacího pokoje i kuchyně je <strong>přímý vstup na terasu</strong>.
+      </p>
+      <p>
+        Užitná plocha 1. NP: <strong>102,62 m²</strong>, 2. NP: <strong>50,39 m²</strong>.
+        Detail rozložení místností najdete v sekci „Seznámení s budovou".
+      </p>
+      <p class="split__cta-wrap">
+        <a href="#lokalita" class="btn btn--ink">Zobrazit dispoziční detail</a>
+      </p>
+    </StorySplit>
+  </Section>
+
+  <!-- 05 — LOKALITA + Seznámení s budovou -->
+  <Section
+    id="lokalita"
+    variant="dark"
+    num="05"
+    eyebrow="Mapa a detail"
+    title="Seznámení s budovou a lokalitou"
+    intro="Detail místností po podlažích, technické řešení a co je v dosahu."
+    width="wide"
+  >
+    <Lokalita
+      address="Lisovice, okres Kladno"
+      coordinates="50.2461,14.1267"
+      groups={locGroups}
+    />
+  </Section>
+
+  <!-- 06 — INVBUILD GATEWAY -->
+  <Section
+    id="invbuild"
+    variant="bone"
+    num="06"
+    eyebrow="Pokračujte"
+    title="Více od INVBUILD"
+    intro="Další projekty, nemovitosti v nabídce a kompletní servis na hlavním webu."
+    align="center"
+  >
+    <Services items={gatewayCards} />
+  </Section>
+
+  <!-- 07 — KONTAKT -->
+  <Section
+    id="kontakt"
+    num="07"
+    eyebrow="Kontakt"
+    title="Sjednejte si prohlídku"
+    align="center"
+  >
+    <Kontakt
+      phone="+420 704 971 814"
+      altPhone="+420 704 971 809"
+    />
+  </Section>
+
+  <Footer />
+  <Reveal />
+</Layout>
+
+<style is:global>
+  .split__body .split__cta-wrap {
+    margin-top: 1.5rem;
+  }
+</style>

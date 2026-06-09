@@ -1,0 +1,310 @@
+---
+// Hero — full-bleed carousel + readable title + stats
+// Silný overlay vlevo zaručí čitelnost textu nad jakoukoliv fotkou.
+export interface Props {
+  title: string;
+  location?: string;
+  stats: { label: string; value: string }[];
+  images: { src: string; alt: string }[];
+}
+const { title, location, stats, images } = Astro.props;
+---
+
+<section id="hero" class="hero" aria-label={`Hero: ${title}`}>
+  <div class="hero__carousel" data-hero-carousel>
+    {images.map((img, i) => (
+      <div class="hero__slide" data-active={i === 0 ? 'true' : 'false'}>
+        <img src={img.src} alt={img.alt}
+             loading={i === 0 ? 'eager' : 'lazy'}
+             fetchpriority={i === 0 ? 'high' : 'auto'} />
+      </div>
+    ))}
+
+    <!-- Silnější vrstvený overlay — guarantee readability -->
+    <div class="hero__overlay-side"  aria-hidden="true"></div>
+    <div class="hero__overlay-bottom" aria-hidden="true"></div>
+
+    {images.length > 1 && (
+      <>
+        <button class="hero__arrow hero__arrow--prev" aria-label="Předchozí foto" data-hero-prev>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="hero__arrow hero__arrow--next" aria-label="Další foto" data-hero-next>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="hero__counter">
+          <span data-hero-current>01</span>
+          <span class="hero__counter-sep">/</span>
+          <span>{String(images.length).padStart(2, '0')}</span>
+        </div>
+      </>
+    )}
+  </div>
+
+  <div class="hero__content container container--wide">
+    <div class="hero__intro">
+      {location && (
+        <span class="eyebrow hero__eyebrow">
+          <span class="eyebrow__num">01</span>
+          <span>{location}</span>
+        </span>
+      )}
+      <h1 class="hero__title">{title}</h1>
+    </div>
+
+    <div class="hero__stats" role="list">
+      {stats.map((s) => (
+        <div class="hero__stat" role="listitem">
+          <span class="hero__stat-label">{s.label}</span>
+          <span class="hero__stat-value lining">{s.value}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <a href="#galerie" class="hero__scroll" aria-label="Scrollovat dolů">
+    <span>Scroll</span>
+    <svg width="11" height="18" viewBox="0 0 12 20" fill="none" aria-hidden="true">
+      <path d="M6 1V19M6 19L1 14M6 19L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 92svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: var(--paper);
+    overflow: hidden;
+    background: var(--ink);
+    isolation: isolate;
+  }
+
+  /* slides */
+  .hero__carousel { position: absolute; inset: 0; z-index: 0; }
+  .hero__slide {
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 900ms var(--ease-out);
+  }
+  .hero__slide[data-active='true'] { opacity: 1; }
+  .hero__slide img {
+    width: 100%; height: 100%; object-fit: cover;
+    transform: scale(1.02);
+    transition: transform 14s linear;
+  }
+  .hero__slide[data-active='true'] img { transform: scale(1.06); }
+
+  /* SILNÝ overlay — zaručí čitelnost textu nad jakoukoliv fotkou */
+  /* 1) Vrstva vlevo (kde leží text) — diagonální gradient */
+  .hero__overlay-side {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      linear-gradient(95deg,
+        rgba(20,17,12,0.78) 0%,
+        rgba(20,17,12,0.62) 28%,
+        rgba(20,17,12,0.35) 52%,
+        rgba(20,17,12,0.10) 75%,
+        rgba(20,17,12,0)    100%);
+  }
+  /* 2) Vrstva dole (kde leží stats) */
+  .hero__overlay-bottom {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      linear-gradient(180deg,
+        rgba(20,17,12,0)    35%,
+        rgba(20,17,12,0.45) 70%,
+        rgba(20,17,12,0.92) 100%);
+  }
+
+  /* arrows */
+  .hero__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(20,17,12,0.42);
+    color: var(--paper);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: grid; place-items: center;
+    z-index: 3;
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
+  }
+  .hero__arrow:hover {
+    background: rgba(20,17,12,0.65);
+    border-color: rgba(255,255,255,0.4);
+  }
+  .hero__arrow--prev { left: clamp(0.5rem, 2vw, 1.5rem); }
+  .hero__arrow--next { right: clamp(0.5rem, 2vw, 1.5rem); }
+  @media (max-width: 480px) {
+    .hero__arrow { width: 40px; height: 40px; }
+    .hero__arrow--prev { left: 0.5rem; }
+    .hero__arrow--next { right: 0.5rem; }
+  }
+
+  /* slide counter */
+  .hero__counter {
+    position: absolute;
+    bottom: clamp(1rem, 2vw, 1.75rem);
+    right: clamp(1rem, 2vw, 1.75rem);
+    z-index: 3;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: var(--tracking-wide);
+    color: rgba(255,255,255,0.85);
+    display: flex; gap: 0.4rem;
+    background: rgba(20,17,12,0.45);
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .hero__counter-sep { opacity: 0.5; }
+
+  /* content */
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 5rem;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    align-items: flex-end;
+  }
+  @media (max-width: 860px) {
+    .hero__content { grid-template-columns: 1fr; }
+  }
+
+  .hero__eyebrow {
+    color: rgba(255,255,255,0.85);
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  }
+  .hero__eyebrow .eyebrow__num { color: var(--accent); }
+
+  .hero__title {
+    font-size: var(--fs-mega);
+    line-height: 1;
+    letter-spacing: var(--tracking-tightest);
+    font-weight: 700;
+    text-wrap: balance;
+    max-width: 18ch;
+    text-shadow:
+      0 2px 16px rgba(0,0,0,0.45),
+      0 1px 3px rgba(0,0,0,0.6);
+  }
+  /* mobil — menší title + max-width */
+  @media (max-width: 600px) {
+    .hero__title {
+      font-size: clamp(2.4rem, 9vw, 3.2rem);
+      max-width: 14ch;
+      line-height: 1.02;
+    }
+  }
+
+  /* stats */
+  .hero__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: clamp(0.75rem, 1.5vw, 1.5rem);
+    padding-top: clamp(1rem, 2vw, 1.5rem);
+    border-top: 1px solid rgba(255,255,255,0.25);
+    align-self: end;
+  }
+  .hero__stat { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+  .hero__stat-label {
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-extra);
+    color: rgba(255,255,255,0.7);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .hero__stat-value {
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.1;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+  }
+  /* mobil — 2×2 stats, menší písmo */
+  @media (max-width: 600px) {
+    .hero__stats {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 1.25rem;
+    }
+    .hero__stat-value { font-size: var(--fs-lg); }
+    .hero__stat-label { letter-spacing: var(--tracking-wide); }
+  }
+  @media (max-width: 360px) {
+    .hero__stats { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .hero__stat-value { font-size: var(--fs-base); font-weight: 700; }
+  }
+
+  /* scroll indicator */
+  .hero__scroll {
+    position: absolute;
+    left: clamp(1rem, 2vw, 1.75rem);
+    bottom: clamp(1rem, 2vw, 1.75rem);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .hero__scroll:hover { color: var(--paper); }
+  .hero__scroll svg { animation: scrollHint 2.5s var(--ease-in-out) infinite; }
+  @keyframes scrollHint {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50%      { transform: translateY(4px); opacity: 1; }
+  }
+  @media (max-width: 600px) { .hero__scroll { display: none; } }
+</style>
+
+<script>
+  const carousel = document.querySelector<HTMLElement>('[data-hero-carousel]');
+  if (carousel) {
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.hero__slide'));
+    const counter = document.querySelector<HTMLElement>('[data-hero-current]');
+    let idx = 0;
+    let timer: number | undefined;
+
+    function show(next: number) {
+      slides[idx].dataset.active = 'false';
+      idx = (next + slides.length) % slides.length;
+      slides[idx].dataset.active = 'true';
+      if (counter) counter.textContent = String(idx + 1).padStart(2, '0');
+    }
+    function start() { timer = window.setInterval(() => show(idx + 1), 7000); }
+    function reset()  { if (timer) clearInterval(timer); start(); }
+
+    document.querySelector('[data-hero-prev]')?.addEventListener('click', () => { show(idx - 1); reset(); });
+    document.querySelector('[data-hero-next]')?.addEventListener('click', () => { show(idx + 1); reset(); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { if (timer) clearInterval(timer); }
+      else { start(); }
+    });
+    if (slides.length > 1) start();
+  }
+</script>

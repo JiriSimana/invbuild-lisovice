@@ -1,0 +1,21 @@
+{
+  "name": "invbuild-mnichovice",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Rodinný dům Mnichovice — INVBUILD",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.1.0",
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}
