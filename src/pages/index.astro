@@ -97,10 +97,11 @@ const locGroups = [
   },
   {
     id: 'topeni',
-    title: 'Topení a voda',
+    title: 'Topení, voda a kanalizace',
     content: `<ul>
         <li><strong>Topení</strong> — lokální tuhá paliva, ústřední dálkové.</li>
         <li><strong>Voda</strong> — připojení na obecní vodovod.</li>
+        <li><strong>Kanalizace</strong> — obecní (nově budovaná obcí).</li>
       </ul>`,
   },
   {
@@ -259,8 +260,14 @@ const navItems = [
         Užitná plocha 1. NP: <strong>102,62 m²</strong>, 2. NP: <strong>50,39 m²</strong>.
         Detail rozložení místností najdete v sekci „Seznámení s budovou".
       </p>
-      <p class="split__cta-wrap">
-        <a href="#lokalita" class="btn btn--ink">Zobrazit dispoziční detail</a>
+      <p class="split__cta-wrap split__cta-wrap--multi">
+        <a href="/dokumenty/pudorys-lisovice-1NP.pdf" target="_blank" rel="noopener" class="btn btn--ink">
+          Půdorys 1. NP (PDF)
+        </a>
+        <a href="/dokumenty/pudorys-lisovice-2NP.pdf" target="_blank" rel="noopener" class="btn btn--ink">
+          Půdorys 2. NP (PDF)
+        </a>
+        <a href="#lokalita" class="btn btn--ghost">Zobrazit detail místností</a>
       </p>
     </StorySplit>
   </Section>
@@ -316,5 +323,10 @@ const navItems = [
 <style is:global>
   .split__body .split__cta-wrap {
     margin-top: 1.5rem;
+  }
+  .split__body .split__cta-wrap--multi {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
   }
 </style>
